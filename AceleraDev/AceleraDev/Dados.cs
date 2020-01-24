@@ -12,9 +12,10 @@ namespace AceleraDev
     {
         [JsonPropertyName("Acelera")]
         public string NumeroCasas { get; set; }
+        public int Numero_casas { get; set; }
         public string Token { get; set; }
         public string Cifrado { get; set; }
         public string Decifrado { get; set; }
-        public string ResumoCriptografico { get; set; }
+        public string Resumo_criptografico { get; set; }
     }
 }
