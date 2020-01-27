@@ -10,8 +10,6 @@ namespace AceleraDev
 {
     class Dados
     {
-        [JsonPropertyName("Acelera")]
-        public string NumeroCasas { get; set; }
         public int Numero_casas { get; set; }
         public string Token { get; set; }
         public string Cifrado { get; set; }

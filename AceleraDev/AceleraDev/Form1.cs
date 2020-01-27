@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,6 +21,7 @@ namespace AceleraDev
 {
     public partial class Form1 : Form
     {
+
         public Form1()
         {
             InitializeComponent();
@@ -47,7 +53,7 @@ namespace AceleraDev
             var webClient = new WebClient();
 
             responseString = webClient.DownloadString("https://api.codenation.dev/v1/challenge/dev-ps/generate-data?token=1adcc80b66da14db6aaee5ee7f388e95e5d7827a");
-
+            
             obj = JsonSerializer.Deserialize<Dados>(responseString, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -71,19 +77,24 @@ namespace AceleraDev
                 + "Decifrado - " + obj.Decifrado + Environment.NewLine
                 + "Criptografia - " + obj.Resumo_criptografico;
 
-            if (!File.Exists(Directory.GetCurrentDirectory() + @"\answer.json"))
-            {
-                File.Create(Directory.GetCurrentDirectory() + @"\answer.json");
-            } 
-
             File.WriteAllText(Directory.GetCurrentDirectory() + @"\answer.json",
                 JsonSerializer.Serialize(obj)
                 );
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(@"https://api.codenation.dev/v1/challenge/dev-ps/submit-solution?token=1adcc80b66da14db6aaee5ee7f388e95e5d7827a");
+            try
+            {
+                WebClient myWebClient1 = new WebClient();
+                var uri = @"https://api.codenation.dev/v1/challenge/dev-ps/submit-solution?token=1adcc80b66da14db6aaee5ee7f388e95e5d7827a";
+                myWebClient1.Headers.Add("name", "answer");
+                myWebClient1.Headers.Add("type", "file");
 
+                myWebClient1.UploadFile(uri,"POST", Directory.GetCurrentDirectory() + @"\answer.json");
+            }
+            catch (Exception e){                
+                MessageBox.Show(e.Message);
+            }
         }
-
+        
         private void DecriptarCifraDeCesar()
         {
             string textoDescriptografado = "";
